@@ -1,7 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { SessionP } from './session.entity';
 
-export enum MetricType {
+export enum AnalysisMetricType {
   TONE = 'tone',
   CLARITY = 'clarity',
   ENERGY = 'energy',
@@ -15,7 +21,9 @@ export class AnalysisMetric {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => SessionP, (session) => session.analysisMetrics, { onDelete: 'CASCADE' })
+  @ManyToOne(() => SessionP, (session) => session.analysisMetrics, {
+    onDelete: 'CASCADE',
+  })
   session: SessionP;
 
   @Column({ type: 'float' })
@@ -23,9 +31,9 @@ export class AnalysisMetric {
 
   @Column({
     type: 'enum',
-    enum: MetricType,
+    enum: AnalysisMetricType,
   })
-  metricType: MetricType;
+  metricType: AnalysisMetricType;
 
   @Column('float')
   value: number;

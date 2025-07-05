@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TranscriptSegment } from '../common/entities/transcript-segment.entity';
+import { TranscriptSegmentEntity } from '../common/entities/transcript-segment.entity';
 import { SessionP } from '../common/entities/session.entity';
 import { CreateTranscriptSegmentDto } from './dto/create-transcript-segment.dto';
 import { TranscriptSegmentResponseDto } from './dto/transcript-segment-response.dto';
@@ -11,8 +11,8 @@ import { AppWebSocketGateway } from '../websocket/websocket.gateway';
 @Injectable()
 export class TranscriptService {
   constructor(
-    @InjectRepository(TranscriptSegment)
-    private transcriptSegmentRepository: Repository<TranscriptSegment>,
+    @InjectRepository(TranscriptSegmentEntity)
+    private transcriptSegmentRepository: Repository<TranscriptSegmentEntity>,
     @InjectRepository(SessionP)
     private sessionRepository: Repository<SessionP>,
     private websocketGateway: AppWebSocketGateway,
@@ -64,7 +64,9 @@ export class TranscriptService {
     // Group by session ID to verify all segments belong to the same session
     const sessionId = createDtos[0].sessionId;
     if (!createDtos.every((dto) => dto.sessionId === sessionId)) {
-      throw new Error('All transcript segments must belong to the same session');
+      throw new Error(
+        'All transcript segments must belong to the same session',
+      );
     }
 
     // Verify the session exists and belongs to the user
@@ -145,7 +147,7 @@ export class TranscriptService {
     }
 
     if (options.isFinal !== undefined) {
-      query.andWhere('segment.metadata->>\'isFinal\' = :isFinal', {
+      query.andWhere("segment.metadata->>'isFinal' = :isFinal", {
         isFinal: options.isFinal.toString(),
       });
     }

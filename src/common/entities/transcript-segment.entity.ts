@@ -1,12 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { SessionP } from './session.entity';
 
 @Entity('transcript_segments')
-export class TranscriptSegment {
+export class TranscriptSegmentEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => SessionP, (session) => session.transcriptSegments, { onDelete: 'CASCADE' })
+  @ManyToOne(() => SessionP, (session) => session.transcriptSegments, {
+    onDelete: 'CASCADE',
+  })
   session: SessionP;
 
   @Column({ name: 'start_time', type: 'float' })
@@ -24,7 +32,13 @@ export class TranscriptSegment {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  constructor(partial: Partial<TranscriptSegment>) {
+  @Column({ type: 'float', nullable: true })
+  confidence?: number;
+
+  @Column('text', { array: true, nullable: true })
+  highlights?: string[];
+
+  constructor(partial: Partial<TranscriptSegmentEntity>) {
     Object.assign(this, partial);
   }
 }

@@ -13,7 +13,7 @@ export class CreateSessionDto {
     enum: SessionType,
     example: SessionType.LIVE,
   })
-  type: SessionType;
+  session_type: SessionType;
 
   @ApiProperty({
     description: 'Source type of the audio/video',
@@ -34,4 +34,11 @@ export class CreateSessionDto {
     example: 'https://example.com/audio.mp3',
   })
   sourceUrl?: string;
+
+  @ApiProperty({
+    description: 'Tags for the session',
+    required: false,
+    example: ['tag1', 'tag2'],
+  })
+  tags?: string[];
 }

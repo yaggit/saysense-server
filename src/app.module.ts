@@ -8,6 +8,7 @@ import { AiModule } from './ai/ai.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { AnalysisModule } from './analysis/analysis.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { AwsCloudModule } from './aws-cloud/aws-cloud.module';
 
 @Module({
   imports: [
@@ -15,14 +16,15 @@ import { FeedbackModule } from './feedback/feedback.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
-    DatabaseModule, 
-    WebsocketModule, 
-    AiModule, 
-    SessionsModule, 
-    AnalysisModule, 
-    FeedbackModule
+    DatabaseModule,
+    WebsocketModule,
+    AiModule,
+    SessionsModule,
+    AnalysisModule,
+    FeedbackModule,
+    AwsCloudModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

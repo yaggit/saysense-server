@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MetricType } from '../../common/entities/analysis-metric.entity';
+import { AnalysisMetricType } from '../../common/entities/analysis-metric.entity';
 
 export class CreateAnalysisMetricDto {
   @ApiProperty({
     description: 'Type of the metric',
-    enum: MetricType,
-    example: MetricType.TONE,
+    enum: AnalysisMetricType,
+    example: AnalysisMetricType.TONE,
   })
-  metricType: MetricType;
+  metricType: AnalysisMetricType;
 
   @ApiProperty({
     description: 'Numeric value of the metric',

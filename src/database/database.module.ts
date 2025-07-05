@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from '../common/entities/user.entity';
 import { SessionP } from '../common/entities/session.entity';
-import { TranscriptSegment } from '../common/entities/transcript-segment.entity';
+import { TranscriptSegmentEntity } from '../common/entities/transcript-segment.entity';
 import { AnalysisMetric } from '../common/entities/analysis-metric.entity';
 import { FeedbackSuggestion } from '../common/entities/feedback-suggestion.entity';
 import { AppDataSource } from './data-source';
@@ -21,7 +21,7 @@ import { AppDataSource } from './data-source';
     TypeOrmModule.forFeature([
       User,
       SessionP,
-      TranscriptSegment,
+      TranscriptSegmentEntity,
       AnalysisMetric,
       FeedbackSuggestion,
     ]),

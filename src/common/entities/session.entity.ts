@@ -1,8 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { User } from './user.entity';
-import { TranscriptSegment } from './transcript-segment.entity';
+import { TranscriptSegmentEntity } from './transcript-segment.entity';
 import { AnalysisMetric } from './analysis-metric.entity';
 import { FeedbackSuggestion } from './feedback-suggestion.entity';
+import { Participants } from './participants.entity';
 
 export enum SessionType {
   LIVE = 'live',
@@ -63,8 +71,8 @@ export class SessionP {
   @Column({ name: 'completed_at', nullable: true })
   completedAt?: Date;
 
-  @OneToMany(() => TranscriptSegment, (segment) => segment.session)
-  transcriptSegments: TranscriptSegment[];
+  @OneToMany(() => TranscriptSegmentEntity, (segment) => segment.session)
+  transcriptSegments: TranscriptSegmentEntity[];
 
   @OneToMany(() => AnalysisMetric, (metric) => metric.session)
   analysisMetrics: AnalysisMetric[];
@@ -74,6 +82,23 @@ export class SessionP {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @Column('text', { array: true, nullable: true })
+  tags?: string[];
+
+  @OneToMany(() => Participants, (participant) => participant.session, {
+    cascade: true,
+  })
+  participants: Participants[];
+
+  @Column('text', { nullable: true })
+  summary?: string;
+
+  @Column({ type: 'float', nullable: true })
+  sentiment?: number;
+
+  @Column({ name: 'deletedAt', nullable: true })
+  deletedAt?: Date;
 
   constructor(partial: Partial<SessionP>) {
     Object.assign(this, partial);

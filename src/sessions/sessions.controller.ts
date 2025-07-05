@@ -20,7 +20,10 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
-import { SessionResponseDto } from './dto/session-response.dto';
+import {
+  SessionResponseDto,
+  SessionWithMetricResponseDto,
+} from './dto/session-response.dto';
 import { RequestWithUser } from '../auth/interfaces/request-with-user.interface';
 
 @ApiTags('sessions')
@@ -67,7 +70,7 @@ export class SessionsController {
   async findOne(
     @Param('id') id: string,
     @Req() req: RequestWithUser,
-  ): Promise<SessionResponseDto> {
+  ): Promise<SessionWithMetricResponseDto> {
     return this.sessionsService.findOne(id, req.user.id);
   }
 
@@ -96,10 +99,24 @@ export class SessionsController {
     description: 'The session has been successfully deleted.',
   })
   @ApiResponse({ status: 404, description: 'Session not found.' })
-  async remove(
-    @Param('id') id: string,
-    @Req() req: RequestWithUser,
-  ): Promise<void> {
-    return this.sessionsService.remove(id, req.user.id);
+  async remove(@Param('id') id: string): Promise<void> {
+    return this.sessionsService.remove(id);
+  }
+
+  // create presigned URL for file upload
+  @Post('/presignedUrl')
+  @ApiOperation({ summary: 'Create a presigned URL for file upload' })
+  @ApiResponse({
+    status: 201,
+    description: 'Presigned URL created successfully.',
+    type: String,
+  })
+  async createPresignedUrl(
+    @Body() body: { fileName: string; fileType: string },
+  ): Promise<{ url: string; key: string }> {
+    return this.sessionsService.createPresignedUrl(
+      body.fileName,
+      body.fileType,
+    );
   }
 }

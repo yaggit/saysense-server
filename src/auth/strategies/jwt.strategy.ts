@@ -29,14 +29,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(request: Request, payload: JwtPayload) {
-    const user = { 
-      id: payload.sub, 
-      email: payload.email, 
+  validate(request: Request, payload: JwtPayload) {
+    const user = {
+      id: payload.sub,
+      name: payload.name,
       role: payload.role,
-      isGuest: payload.isGuest 
+      isGuest: payload.isGuest,
     };
-    
+
     // Attach user to request object
     (request as any).user = user;
     return user;
