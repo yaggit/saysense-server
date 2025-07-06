@@ -4,7 +4,13 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Repository } from 'typeorm';
+import {
+  Between,
+  IsNull,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { SessionP, SessionStatus } from '../common/entities/session.entity';
 import { Participants } from '../common/entities/participants.entity';
 import { User } from '../common/entities/user.entity';
@@ -17,6 +23,8 @@ import {
 import { AppWebSocketGateway } from '../websocket/websocket.gateway';
 import { S3Service } from 'src/aws-cloud/aws-services/s3.services';
 import { TranscriptSegmentEntity } from '../common/entities/transcript-segment.entity';
+import { TranscribeService } from 'src/aws-cloud/aws-services/transcribe.services';
+import { LanguageCode } from '@aws-sdk/client-transcribe';
 
 @Injectable()
 export class SessionsService {
@@ -29,6 +37,7 @@ export class SessionsService {
     private transcriptSegmentRepository: Repository<TranscriptSegmentEntity>,
     private websocketGateway: AppWebSocketGateway,
     private s3Service: S3Service,
+    private transcribeService: TranscribeService,
   ) {}
 
   async create(
@@ -47,6 +56,11 @@ export class SessionsService {
       const savedSession = await this.sessionsRepository.save(session);
 
       if (savedSession?.id) {
+        await this.transcribeService.startTranscriptionJob(
+          `transcribe-${savedSession.id}`,
+          savedSession.language as LanguageCode,
+          savedSession.source_url as string,
+        );
         // create a participant
         await this.participantsRepository.upsert(
           {
@@ -210,5 +224,25 @@ export class SessionsService {
 
   async createPresignedUrl(fileName: string, fileType: string) {
     return this.s3Service.getPresignedUrl(fileName, fileType);
+  }
+
+  async filter(
+    startDate: string,
+    endDate: string,
+    userId: string,
+    status?: string,
+  ): Promise<SessionResponseDto[]> {
+    try {
+      const sessions = await this.sessionsRepository.find({
+        where: {
+          user: { id: userId },
+          createdAt: Between(new Date(startDate), new Date(endDate)),
+          status: status ? (status as SessionStatus) : undefined,
+        },
+      });
+      return sessions.map((session) => new SessionResponseDto(session));
+    } catch (error) {
+      throw new Error(`Failed to filter sessions: ${error}`);
+    }
   }
 }

@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { SessionP } from './session.entity';
+import { LanguageCode } from '@aws-sdk/client-transcribe';
 
 export enum UserRole {
   USER = 'user',
@@ -37,8 +38,8 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ name: 'preferred_lang', default: 'en' })
-  preferredLang: string;
+  @Column({ name: 'preferred_lang', default: LanguageCode.EN_US })
+  preferredLang: LanguageCode;
 
   @Column({ name: 'google_id', nullable: true })
   googleId?: string;

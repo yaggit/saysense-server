@@ -21,7 +21,11 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.usersRepository.findOne({ where: { email } });
-    if (user && !user.isGuest && (await bcrypt.compare(password, user.passwordHash))) {
+    if (
+      user &&
+      !user.isGuest &&
+      (await bcrypt.compare(password, user.passwordHash))
+    ) {
       const { passwordHash, ...result } = user;
       return result;
     }
@@ -30,7 +34,7 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     const { email, password, googleToken } = loginDto;
-    
+
     if (googleToken) {
       // Handle Google OAuth login
       return this.loginWithGoogle(googleToken);
@@ -49,15 +53,17 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const { email, password, name, googleToken } = registerDto;
-    
+
     // Check if user already exists
-    const existingUser = await this.usersRepository.findOne({ where: { email } });
+    const existingUser = await this.usersRepository.findOne({
+      where: { email },
+    });
     if (existingUser) {
       throw new Error('User already exists');
     }
 
     let user: User;
-    
+
     if (googleToken) {
       // Handle Google OAuth registration
       user = this.usersRepository.create({
@@ -69,7 +75,7 @@ export class AuthService {
       // Regular email/password registration
       const salt = await bcrypt.genSalt();
       const hashedPassword = await bcrypt.hash(password, salt);
-      
+
       user = this.usersRepository.create({
         email,
         name,

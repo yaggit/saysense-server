@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -32,6 +33,27 @@ import { RequestWithUser } from '../auth/interfaces/request-with-user.interface'
 @ApiBearerAuth()
 export class SessionsController {
   constructor(private readonly sessionsService: SessionsService) {}
+
+  @Get('/filter')
+  @ApiOperation({ summary: 'Get sessions by date range and filter' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return sessions by date range and filter.',
+    type: [SessionResponseDto],
+  })
+  async filter(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Req() req: RequestWithUser,
+    @Query('status') status?: string,
+  ): Promise<SessionResponseDto[]> {
+    return this.sessionsService.filter(
+      startDate,
+      endDate,
+      req.user.id,
+      status || '',
+    );
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new session' })

@@ -38,7 +38,7 @@ export class SessionResponseDto {
     description: 'URL of the source file',
     example: 'https://example.com/recording.mp3',
   })
-  sourceUrl?: string;
+  source_url?: string;
 
   @ApiProperty({
     description: 'Language code of the session',
@@ -79,7 +79,7 @@ export class SessionResponseDto {
     this.title = session.title;
     this.session_type = session.session_type;
     this.sourceType = session.sourceType;
-    this.sourceUrl = session.sourceUrl;
+    this.source_url = session.source_url;
     this.language = session.language;
     this.status = session.status;
     this.durationSec = session.durationSec;

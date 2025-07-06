@@ -53,7 +53,7 @@ export class SessionP {
   sourceType: SourceType;
 
   @Column({ name: 'source_url', nullable: true })
-  sourceUrl?: string;
+  source_url?: string;
 
   @Column()
   language: string;
